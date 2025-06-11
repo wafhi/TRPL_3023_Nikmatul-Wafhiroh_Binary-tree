@@ -1,0 +1,34 @@
+class Node<T> {
+  T key;
+  Node<T>? left;
+  Node<T>? right;
+
+  Node(this.key);
+}
+
+class BinaryTree<T> {
+  Node<T>? root;
+
+  void preOrderDisplay(Node<T>? node) {
+    if (node != null) {
+      print('${node.key} ');
+      preOrderDisplay(node.left);
+      preOrderDisplay(node.right);
+    }
+  }
+
+  void printPreorderFromRoot() {
+    preOrderDisplay(root);
+  }
+}
+
+void main() {
+  var tree = BinaryTree<int>();
+  tree.root = Node(1);
+  tree.root!.left = Node(2);
+  tree.root!.right = Node(3);
+  tree.root!.left!.left = Node(4);
+
+  print("Pre Order traversal of binary tree is:");
+  tree.printPreorderFromRoot();
+}
