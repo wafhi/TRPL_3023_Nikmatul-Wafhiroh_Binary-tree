@@ -1,0 +1,99 @@
+import 'dart:io';
+
+class STNode<T> {
+  T nodeValue;
+  STNode<T>? left, right, parent;
+  STNode(this.nodeValue, [this.parent]);
+}
+
+class BinarySearchTree<T extends Comparable> {
+  STNode<T>? root;
+  int treeSize = 0;
+
+  bool add(T item) {
+    STNode<T>? t = root, parent;
+    int orderValue = 0;
+    while (t != null) {
+      parent = t;
+      orderValue = item.compareTo(t.nodeValue);
+      if (orderValue == 0) return false;
+      t = orderValue < 0 ? t.left : t.right;
+    }
+    var newNode = STNode<T>(item, parent);
+    if (parent == null) {
+      root = newNode;
+    } else if (orderValue < 0) {
+      parent.left = newNode;
+    } else {
+      parent.right = newNode;
+    }
+    treeSize++;
+    return true;
+  }
+
+  // Temukan node dengan nilai tertentu
+  STNode<T>? findNode(T item) {
+    STNode<T>? t = root;
+    int orderValue = 0;
+    while (t != null) {
+      orderValue = item.compareTo(t.nodeValue);
+      if (orderValue == 0) return t;
+      t = orderValue < 0 ? t.left : t.right;
+    }
+    return null;
+  }
+
+  // Inorder traversal (hasil sejajar)
+  void inorder(STNode<T>? node, List<T> result) {
+    if (node == null) return;
+    inorder(node.left, result);
+    result.add(node.nodeValue);
+    inorder(node.right, result);
+  }
+
+  // Preorder traversal (hasil sejajar)
+  void preorder(STNode<T>? node, List<T> result) {
+    if (node == null) return;
+    result.add(node.nodeValue);
+    preorder(node.left, result);
+    preorder(node.right, result);
+  }
+
+  // Postorder traversal (hasil sejajar)
+  void postorder(STNode<T>? node, List<T> result) {
+    if (node == null) return;
+    postorder(node.left, result);
+    postorder(node.right, result);
+    result.add(node.nodeValue);
+  }
+}
+
+void main() {
+  var bst = BinarySearchTree<int>();
+  bst.add(7);
+  bst.add(4);
+  bst.add(5);
+  bst.add(9);
+  bst.add(11);
+  bst.add(12);
+
+  var inOrderResult = <int>[];
+  bst.inorder(bst.root, inOrderResult);
+  print('InOrder   : ${inOrderResult.join(' ')}');
+
+  var preOrderResult = <int>[];
+  bst.preorder(bst.root, preOrderResult);
+  print('PreOrder  : ${preOrderResult.join(' ')}');
+
+  var postOrderResult = <int>[];
+  bst.postorder(bst.root, postOrderResult);
+  print('PostOrder : ${postOrderResult.join(' ')}');
+
+  // Contoh pencarian node
+  var node = bst.findNode(9);
+  if (node != null) {
+    print('Node 9 ditemukan');
+  } else {
+    print('Node 9 tidak ditemukan');
+  }
+}
