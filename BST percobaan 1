@@ -1,0 +1,45 @@
+class STNode<T> {
+  T value;
+  STNode<T>? left, right;
+  STNode(this.value);
+}
+
+class BinarySearchTree<T extends Comparable> {
+  STNode<T>? root;
+
+  // Menambah item ke BST secara rekursif
+  void add(T item) {
+    root = _addRecursive(root, item);
+  }
+
+  STNode<T> _addRecursive(STNode<T>? node, T item) {
+    if (node == null) return STNode(item);
+    if (item.compareTo(node.value) < 0) {
+      node.left = _addRecursive(node.left, item);
+    } else if (item.compareTo(node.value) > 0) {
+      node.right = _addRecursive(node.right, item);
+    }
+    return node;
+  }
+
+  // Mendapatkan nilai terkecil di BST
+  T first() {
+    if (root == null) throw Exception('Tree is empty');
+    var current = root!;
+    while (current.left != null) {
+      current = current.left!;
+    }
+    return current.value;
+  }
+}
+
+void main() {
+  var bst = BinarySearchTree<int>();
+  bst.add(35);
+  bst.add(18);
+  bst.add(25);
+  bst.add(48);
+  bst.add(20);
+
+  print("Nilai terkecil: ${bst.first()}");
+}
