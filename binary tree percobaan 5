@@ -1,0 +1,11 @@
+class BinaryTree<T> { 
+  int maxDepth(dynamic node) { 
+    if (node == null) {  	   
+      return 0; 
+    } else { 
+      int lDepth = maxDepth(node.left);   
+      int rDepth = maxDepth(node.right);   
+      return (lDepth > rDepth ? lDepth : rDepth) + 1; 
+    } 
+  }
+}
