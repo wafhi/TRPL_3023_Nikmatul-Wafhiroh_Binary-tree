@@ -1,0 +1,67 @@
+import 'dart:collection';
+
+class BinaryTree<T> {
+  dynamic root;
+
+  void deleteDeepest(dynamic root, dynamic delNode) {
+    if (root == null) return;
+    Queue queue = Queue();
+    queue.add(root);
+
+    while (queue.isNotEmpty) {
+      var temp = queue.removeFirst();
+      if (temp == delNode) {
+        // Tidak bisa menghapus node langsung, jadi biarkan parent yang menghapus referensinya
+        temp = null;
+        return;
+      }
+      if (temp.right != null) {
+        if (temp.right == delNode) {
+          temp.right = null;
+          return;
+        } else {
+          queue.add(temp.right);
+        }
+      }
+      if (temp.left != null) {
+        if (temp.left == delNode) {
+          temp.left = null;
+          return;
+        } else {
+          queue.add(temp.left);
+        }
+      }
+    }
+  }
+
+  void delete(dynamic root, dynamic key) {
+    if (root == null) return;
+
+    if (root.left == null && root.right == null) {
+      if (root.key == key) {
+        this.root = null;
+      }
+      return;
+    }
+
+    Queue queue = Queue();
+    queue.add(root);
+    dynamic temp;
+    dynamic keyNode;
+
+    while (queue.isNotEmpty) {
+      temp = queue.removeFirst();
+      if (temp.key == key) {
+        keyNode = temp;
+      }
+      if (temp.left != null) queue.add(temp.left);
+      if (temp.right != null) queue.add(temp.right);
+    }
+
+    if (keyNode != null) {
+      var x = temp.key;
+      deleteDeepest(root, temp);
+      keyNode.key = x;
+    }
+  }
+}
