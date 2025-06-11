@@ -1,0 +1,188 @@
+import 'dart:io';
+
+// Node BST
+class STNode<T> {
+  T nodeValue;
+  STNode<T>? left, right, parent;
+  STNode(this.nodeValue, [this.parent]);
+}
+
+// Binary Search Tree
+class BinarySearchTree<T extends Comparable> {
+  STNode<T>? root;
+  int treeSize = 0;
+
+  STNode<T>? getRoot() => root;
+
+  bool add(T item) {
+    STNode<T>? t = root, parent;
+    int orderValue = 0;
+    while (t != null) {
+      parent = t;
+      orderValue = item.compareTo(t.nodeValue);
+      if (orderValue == 0) return false;
+      t = orderValue < 0 ? t.left : t.right;
+    }
+    var newNode = STNode<T>(item, parent);
+    if (parent == null) {
+      root = newNode;
+    } else if (orderValue < 0) {
+      parent.left = newNode;
+    } else {
+      parent.right = newNode;
+    }
+    treeSize++;
+    return true;
+  }
+
+  // Temukan node dengan nilai tertentu
+  STNode<T>? findNode(T item) {
+    STNode<T>? t = root;
+    int orderValue = 0;
+    while (t != null) {
+      orderValue = item.compareTo(t.nodeValue);
+      if (orderValue == 0) return t;
+      t = orderValue < 0 ? t.left : t.right;
+    }
+    return null;
+  }
+
+  // Temukan node, return true jika ada
+  bool find(T item) => findNode(item) != null;
+
+  // Hapus node (hanya untuk node dengan 0 atau 1 anak, versi sederhana)
+  void removeNode(STNode<T>? dNode) {
+    if (dNode == null) return;
+    STNode<T>? pNode = dNode.parent;
+    STNode<T>? rNode = dNode.left ?? dNode.right;
+
+    if (rNode != null) rNode.parent = pNode;
+
+    if (pNode == null) {
+      root = rNode;
+    } else if (dNode == pNode.left) {
+      pNode.left = rNode;
+    } else {
+      pNode.right = rNode;
+    }
+    treeSize--;
+  }
+
+  // Inorder traversal (sejajar)
+  void inorderIterative(STNode<T>? node) {
+    if (node == null) return;
+    List<STNode<T>?> stack = [];
+    STNode<T>? current = node;
+    List<T> result = [];
+    while (current != null || stack.isNotEmpty) {
+      while (current != null) {
+        stack.add(current);
+        current = current.left;
+      }
+      current = stack.removeLast();
+      result.add(current!.nodeValue);
+      current = current.right;
+    }
+    print(result.join(' '));
+  }
+
+  // Preorder traversal (sejajar)
+  void preorderIterative(STNode<T>? node) {
+    if (node == null) return;
+    List<STNode<T>?> stack = [node];
+    List<T> result = [];
+    while (stack.isNotEmpty) {
+      STNode<T>? current = stack.removeLast();
+      result.add(current!.nodeValue);
+      if (current.right != null) stack.add(current.right);
+      if (current.left != null) stack.add(current.left);
+    }
+    print(result.join(' '));
+  }
+
+  // Postorder traversal (sejajar)
+  void postorderIterative(STNode<T>? node) {
+    if (node == null) return;
+    List<STNode<T>?> stack1 = [node];
+    List<STNode<T>?> stack2 = [];
+    List<T> result = [];
+    while (stack1.isNotEmpty) {
+      STNode<T>? current = stack1.removeLast();
+      stack2.add(current);
+      if (current!.left != null) stack1.add(current.left);
+      if (current.right != null) stack1.add(current.right);
+    }
+    while (stack2.isNotEmpty) {
+      result.add(stack2.removeLast()!.nodeValue);
+    }
+    print(result.join(' '));
+  }
+
+  // Visualisasi pohon
+  void printNode(STNode<T>? node, [String prefix = '', bool isTail = true]) {
+    if (node != null) {
+      print(prefix + (isTail ? '╰─► ' : '├─► ') + '[ ${node.nodeValue} ]');
+      final children = <STNode<T>?>[];
+      if (node.right != null) children.add(node.right);
+      if (node.left != null) children.add(node.left);
+      for (int i = 0; i < children.length; i++) {
+        printNode(
+          children[i],
+          prefix + (isTail ? '    ' : '│   '),
+          i == children.length - 1,
+        );
+      }
+    }
+  }
+}
+
+void main() {
+  BinarySearchTree<int> BSTree = BinarySearchTree();
+
+  BSTree.add(7);
+  BSTree.add(4);
+  BSTree.add(5);
+  BSTree.add(9);
+  BSTree.add(11);
+  BSTree.add(12);
+
+  BSTree.printNode(BSTree.getRoot());
+
+  print('\ninorder   :');
+  BSTree.inorderIterative(BSTree.getRoot());
+
+  print('\npreorder  :');
+  BSTree.preorderIterative(BSTree.getRoot());
+
+  print('\npostorder :');
+  BSTree.postorderIterative(BSTree.getRoot());
+
+  print('\nfindnode 5:');
+  var node = BSTree.findNode(5);
+  if (node != null) {
+    print('Node found with value: ${node.nodeValue}');
+  } else {
+    print('Node not found.');
+  }
+
+  print('\nfind(5):');
+  bool nodefind = BSTree.find(5);
+  if (nodefind) {
+    print('Node found');
+  } else {
+    print('Node not found.');
+  }
+
+  // Penghapusan node
+  var nodeToRemove = BSTree.findNode(5);
+  if (nodeToRemove != null) {
+    print('\nPenghapusan nilai ${nodeToRemove.nodeValue}:');
+    BSTree.removeNode(nodeToRemove);
+  } else {
+    print('\nNode 5 tidak ditemukan, tidak bisa dihapus.');
+  }
+
+  print('\nTree setelah penghapusan:');
+  BSTree.printNode(BSTree.getRoot());
+  print('\nTree Size: ${BSTree.treeSize}');
+}
