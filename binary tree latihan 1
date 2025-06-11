@@ -1,0 +1,169 @@
+import 'dart:io';
+
+class Dnode {
+  int nodeValue;
+  Dnode? next, prev;
+
+  Dnode(this.nodeValue)
+      : next = null,
+        prev = null;
+}
+
+class DoubleLinkedList {
+  Dnode? head, tail;
+
+  bool isEmpty() {
+    return head == null; // Metode isEmpty
+  }
+
+  // Penyisipan dnode di depan
+  void push(int data) {
+    Dnode baru = Dnode(data);
+    if (isEmpty()) {
+      head = baru;
+      tail = baru; // Set tail juga jika ini adalah elemen pertama
+    } else {
+      baru.next = head;
+      head!.prev = baru;
+      head = baru;
+    }
+  }
+
+  // Penyisipan dnode di belakang
+  void append(int data) {
+    Dnode baru = Dnode(data);
+    if (isEmpty()) {
+      head = baru;
+      tail = baru; // Set tail juga jika ini adalah elemen pertama
+    } else {
+      tail!.next = baru;
+      baru.prev = tail;
+      tail = baru; // Memperbarui tail
+    }
+  }
+
+  // Penyisipan dnode di tengah berdasarkan posisi
+  void insertAt(int position, int data) {
+    Dnode baru = Dnode(data);
+
+    if (position == 0) {
+      push(data);
+      return;
+    }
+
+    Dnode? current = head;
+    for (int i = 0; i < position - 1; i++) {
+      if (current == null) {
+        print("Posisi melebihi jumlah elemen. Node tidak disisipkan.");
+        return;
+      }
+      current = current.next;
+    }
+
+    baru.next = current?.next;
+    baru.prev = current;
+
+    if (current?.next != null) {
+      current?.next!.prev = baru; // Menghubungkan node setelahnya ke node baru
+    } else {
+      tail = baru; // Jika menyisipkan di akhir, update tail
+    }
+
+    current?.next = baru; // Menghubungkan current ke node baru
+  }
+
+  // Menghapus node berdasarkan nilai target
+  void deleteByTarget(int target) {
+    Dnode? current = head;
+
+    // Mencari node dengan nilai target
+    while (current != null) {
+      if (current.nodeValue == target) {
+        // Jika node adalah head
+        if (current == head) {
+          head = head?.next;
+          if (head != null) {
+            head!.prev = null; // Update prev jika head baru ada
+          } else {
+            tail = null; // Jika list kosong setelah penghapusan
+          }
+        } else {
+          // Menghubungkan node sebelumnya dan berikutnya
+          current.prev?.next = current.next;
+          if (current.next != null) {
+            current.next!.prev = current.prev;
+          } else {
+            tail = current.prev; // Update tail jika node terakhir dihapus
+          }
+        }
+        return; // Node dihapus, keluar dari fungsi
+      }
+      current = current.next; // Pindah ke node berikutnya
+    }
+    print("Node dengan nilai $target tidak ditemukan.");
+  }
+
+  // Menghapus node berdasarkan posisi
+  void deleteByPosition(int position) {
+    if (position < 0) {
+      print("Posisi tidak valid.");
+      return;
+    }
+
+    Dnode? current = head;
+
+    // Jika menghapus node di posisi 0 (head)
+    if (position == 0) {
+      if (head != null) {
+        head = head!.next;
+        if (head != null) {
+          head!.prev = null; // Update prev jika head baru ada
+        } else {
+          tail = null; // Jika list kosong setelah penghapusan
+        }
+      }
+      return;
+    }
+
+    // Mencari node di posisi yang ditentukan
+    for (int i = 0; i < position; i++) {
+      if (current == null) {
+        print("Posisi melebihi jumlah elemen. Node tidak dihapus.");
+        return;
+      }
+      current = current.next;
+    }
+
+    // Jika node yang dihapus tidak null
+    if (current != null) {
+      current.prev?.next = current.next;
+      if (current.next != null) {
+        current.next!.prev = current.prev;
+      } else {
+        tail = current.prev; // Update tail jika node terakhir dihapus
+      }
+    } else {
+      print("Node tidak ditemukan pada posisi $position.");
+    }
+  }
+
+  // Metode untuk mencetak list
+  void printList(Dnode? node) {
+    Dnode? tail = null;
+    stdout.write("Forward Traversal: ");
+    while (node != null) {
+      stdout.write("${node.nodeValue} ");
+      tail = node;
+      node = node.next;
+    }
+    print(" ");
+
+    stdout.write("Reverse Traversal: ");
+    while (tail != null) {
+      stdout.write("${tail.nodeValue} ");
+      tail = tail.prev;
+    }
+    print(" ");
+}
+
+}
