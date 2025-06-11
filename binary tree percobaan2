@@ -1,0 +1,48 @@
+class Node<T> {
+  T key;
+  Node<T>? left;
+  Node<T>? right;
+
+  Node(this.key);
+}
+
+class BinaryTree<T> {
+  Node<T>? root;
+
+  BinaryTree() {
+    root = null;
+  }
+
+  // Fungsi untuk menampilkan tree secara in-order
+  void InOrderDisplay(Node<T>? node) {
+    if (node != null) {
+      InOrderDisplay(node.left); // Kunjungi subtree kiri
+      print('${node.key} '); // Cetak nilai node
+      InOrderDisplay(node.right); // Kunjungi subtree kanan
+    }
+  }
+
+  // Memulai traversal in-order dari root
+  void printInOrderFromRoot() {
+    if (root == null) {
+      print("Tree kosong.");
+    } else {
+      InOrderDisplay(root);
+    }
+  }
+}
+
+void main() {
+  BinaryTree<int> tree = BinaryTree<int>();
+
+  // Membuat struktur binary tree
+  tree.root = Node(10);
+  tree.root!.left = Node(20);
+  tree.root!.right = Node(30);
+  tree.root!.left!.left = Node(40);
+  tree.root!.left!.right = Node(50);
+
+  // Menampilkan tree secara in-order
+  print("In-order traversal:");
+  tree.printInOrderFromRoot();
+}
